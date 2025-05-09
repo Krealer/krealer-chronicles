@@ -1,24 +1,29 @@
+# player.py
 import pygame
 from settings import *
 
-# Player class represents Krealer
+# Player class represents Krealer, the main controllable character
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos):
-        super().__init__()  # Call Sprite's constructor
+    def __init__(self, pos, scale=(100, 100)):
+        super().__init__()  # Initialize the Sprite superclass
 
-        # Load the player's image (Krealer)
+        # Load the player's image from file
         self.image = pygame.image.load("assets/images/krealer.png").convert_alpha()
 
-        # Resize if needed (optional):
-        # self.image = pygame.transform.scale(self.image, (64, 64))
+        # Resize the image to the desired width and height for better fit on screen
+        self.image = pygame.transform.scale(self.image, scale)
 
-        # Get the rect (hitbox) from the image and set starting position
+        # Get the rectangle (position and size) from the image, and set the starting position
         self.rect = self.image.get_rect(center=pos)
 
-        # Movement speed from settings
+        # Movement speed in pixels per frame, imported from settings
         self.speed = PLAYER_SPEED
 
-    def handle_input(self):
+    # Handle user input for character movement
+    def handle_input(self, obstacles):
+        # Store the current position to roll back if collision happens
+        original_position = self.rect.copy()
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -30,5 +35,11 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.rect.y += self.speed
 
-    def update(self):
-        self.handle_input()
+        # Check for collisions with any obstacles
+        for obstacle in obstacles:
+            if self.rect.colliderect(obstacle):
+                self.rect = original_position  # Revert to previous position if colliding
+
+    # Update function called automatically every frame
+    def update(self, obstacles):
+        self.handle_input(obstacles)  # Check for user input and move accordingly
