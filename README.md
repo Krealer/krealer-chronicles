@@ -41,7 +41,7 @@
 
 ```bash
 # Clone the repo
-git clone git@github.com:yourusername/krealer-chronicles.git
+git clone git@github.com:krealer/krealer-chronicles.git
 cd krealer-chronicles
 
 # Create and activate a virtual environment
